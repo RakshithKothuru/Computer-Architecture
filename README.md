@@ -203,7 +203,65 @@ For example, if a process requires one byte more than a complete 2 KiB page, ano
 
 ---
 
-## 5. Address Translation Example
+## 5. MMU and Page Table
+
+### Memory Management Unit
+
+The **Memory Management Unit (MMU)** is hardware that translates virtual addresses into physical addresses.
+
+The MMU also performs:
+
+- TLB lookup
+- Page-table lookup
+- Read/write permission checking
+- Execute-permission checking
+- User/kernel access checking
+- Protection-fault generation
+
+The operating system creates and maintains the page tables, while the MMU uses them during translation.
+
+### Page Table
+
+A **page table** stores mappings from Virtual Page Numbers to Physical Frame Numbers.
+
+| Virtual page number | Physical frame number |
+|---:|---:|
+| 0 | 500 |
+| 1 | 110 |
+| 2 | Not present |
+| 3 | 800 |
+
+Each process normally has its own page-table hierarchy.
+
+During a process context switch, the operating system changes a special CPU register that points to the new process’s page-table root.
+
+### Page-Table Entry
+
+A **Page-Table Entry (PTE)** generally contains:
+
+- Physical frame number
+- Present or valid bit
+- Read/write permission
+- User/kernel permission
+- Execute-disable bit
+- Accessed bit
+- Dirty bit
+
+Important control bits:
+
+| Bit | Meaning |
+|---|---|
+| Present | Indicates whether the page is currently in physical memory |
+| Read/write | Controls whether the page can be modified |
+| Execute | Controls whether instructions can be executed from the page |
+| Accessed | Indicates that the page was recently accessed |
+| Dirty | Indicates that the page was modified |
+
+A dirty page must normally be written to secondary storage before it is removed from physical memory.
+
+---
+
+## 6. Address Translation Example
 
 Assume:
 
@@ -309,64 +367,6 @@ Physical address: PFN | Same offset
 ```
 
 The page offset remains unchanged because pages and frames have the same size.
-
----
-
-## 6. MMU and Page Table
-
-### Memory Management Unit
-
-The **Memory Management Unit (MMU)** is hardware that translates virtual addresses into physical addresses.
-
-The MMU also performs:
-
-- TLB lookup
-- Page-table lookup
-- Read/write permission checking
-- Execute-permission checking
-- User/kernel access checking
-- Protection-fault generation
-
-The operating system creates and maintains the page tables, while the MMU uses them during translation.
-
-### Page Table
-
-A **page table** stores mappings from Virtual Page Numbers to Physical Frame Numbers.
-
-| Virtual page number | Physical frame number |
-|---:|---:|
-| 0 | 500 |
-| 1 | 110 |
-| 2 | Not present |
-| 3 | 800 |
-
-Each process normally has its own page-table hierarchy.
-
-During a process context switch, the operating system changes a special CPU register that points to the new process’s page-table root.
-
-### Page-Table Entry
-
-A **Page-Table Entry (PTE)** generally contains:
-
-- Physical frame number
-- Present or valid bit
-- Read/write permission
-- User/kernel permission
-- Execute-disable bit
-- Accessed bit
-- Dirty bit
-
-Important control bits:
-
-| Bit | Meaning |
-|---|---|
-| Present | Indicates whether the page is currently in physical memory |
-| Read/write | Controls whether the page can be modified |
-| Execute | Controls whether instructions can be executed from the page |
-| Accessed | Indicates that the page was recently accessed |
-| Dirty | Indicates that the page was modified |
-
-A dirty page must normally be written to secondary storage before it is removed from physical memory.
 
 ---
 
@@ -538,56 +538,7 @@ A multilevel page table saves memory when the virtual address space is sparsely 
 
 ---
 
-## 8. Page Fault
-
-A **page fault** occurs when an address translation requires operating-system intervention.
-
-A common case is when the requested page is valid but is not currently present in physical memory.
-
-The sequence is:
-
-1. The CPU generates a virtual address.
-2. The MMU searches the TLB.
-3. On a TLB miss, the page table is checked.
-4. The PTE indicates `Present = 0`.
-5. The CPU raises a page-fault exception.
-6. The OS checks whether the virtual address is valid.
-7. The OS obtains a free frame or evicts another page.
-8. A dirty evicted page is written to secondary storage.
-9. The required page is loaded from secondary storage.
-10. The PTE and TLB are updated.
-11. The interrupted instruction is restarted.
-
-```text
-Page not present
-      ↓
-Page fault
-      ↓
-OS validates the address
-      ↓
-Find a free frame or evict another page
-      ↓
-Load the page from secondary storage
-      ↓
-Update the PTE and TLB
-      ↓
-Restart the instruction
-```
-
-Loading a page only when it is required is called **demand paging**.
-
-A page fault is not always an error:
-
-| Situation | OS action |
-|---|---|
-| Valid page stored on disk | Load it into RAM |
-| Valid page not yet allocated | Allocate a new page |
-| Invalid virtual address | Report an access violation |
-| Write to a read-only page | Report a protection fault |
-
----
-
-## 9. Translation Lookaside Buffer
+## 8. Translation Lookaside Buffer
 
 The **Translation Lookaside Buffer (TLB)** is a small and fast hardware cache that stores recently used address translations.
 
@@ -647,6 +598,56 @@ Continue memory access
 Therefore:
 
 > A TLB miss does not necessarily cause a page fault.
+
+## 9. Page Fault
+
+A **page fault** occurs when an address translation requires operating-system intervention.
+
+A common case is when the requested page is valid but is not currently present in physical memory.
+
+The sequence is:
+
+1. The CPU generates a virtual address.
+2. The MMU searches the TLB.
+3. On a TLB miss, the page table is checked.
+4. The PTE indicates `Present = 0`.
+5. The CPU raises a page-fault exception.
+6. The OS checks whether the virtual address is valid.
+7. The OS obtains a free frame or evicts another page.
+8. A dirty evicted page is written to secondary storage.
+9. The required page is loaded from secondary storage.
+10. The PTE and TLB are updated.
+11. The interrupted instruction is restarted.
+
+```text
+Page not present
+      ↓
+Page fault
+      ↓
+OS validates the address
+      ↓
+Find a free frame or evict another page
+      ↓
+Load the page from secondary storage
+      ↓
+Update the PTE and TLB
+      ↓
+Restart the instruction
+```
+
+Loading a page only when it is required is called **demand paging**.
+
+A page fault is not always an error:
+
+| Situation | OS action |
+|---|---|
+| Valid page stored on disk | Load it into RAM |
+| Valid page not yet allocated | Allocate a new page |
+| Invalid virtual address | Report an access violation |
+| Write to a read-only page | Report a protection fault |
+
+---
+
 
 ---
 
