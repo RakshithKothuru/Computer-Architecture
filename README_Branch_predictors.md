@@ -1,5 +1,20 @@
 # Branch Prediction in a 5-Stage RISC-V Pipeline
 
+## Index
+
+1. [Why Branch Prediction?](#1-why-branch-prediction)
+2. [Static Branch Prediction](#2-static-branch-prediction)
+3. [Dynamic Branch Prediction](#3-dynamic-branch-prediction)
+4. [2-Bit Saturating Counter](#4-2-bit-saturating-counter)
+5. [Branch History Table (BHT)](#5-branch-history-table-bht)
+6. [How Is the BHT Accessed?](#6-how-is-the-bht-accessed)
+7. [Fixed BHT Size and Aliasing](#7-fixed-bht-size-and-aliasing)
+8. [Branch Target Buffer (BTB)](#8-branch-target-buffer-btb)
+9. [Cycle-by-Cycle Example](#9-cycle-by-cycle-example)
+10. [Branch Misprediction Penalty](#10-branch-misprediction-penalty)
+11. [Complete Branch Prediction Flow](#11-complete-branch-prediction-flow)
+12. [Quick Summary](#12-quick-summary)
+
 ## 1. Why Branch Prediction?
 
 Consider the classic 5-stage RISC-V pipeline:
