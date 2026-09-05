@@ -70,12 +70,9 @@ It is implemented using:
 
 Virtual memory provides:
 
-- Process isolation
-- Memory protection
+- Isolated memory for each process
 - Non-contiguous physical-memory allocation
 - Demand paging
-- Memory sharing
-- A simple address space for programs
 
 Virtual memory is not a separate physical memory device. It is an abstraction created through address translation.
 
@@ -705,5 +702,3 @@ Physical address
       ↓
 Cache or physical memory
 ```
-
-
