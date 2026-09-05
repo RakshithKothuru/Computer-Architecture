@@ -411,7 +411,8 @@ The complete table is required even when a process uses only a small part of its
 
 First thing is you divide the a large table into multiple smaller tables, and you need only those page tables where your process is accessing the virtual address space not all tables.
 
-Just remember that in multilevel page table relatively very less memory is required even though all tables are required than flat table with the tradeoff of accessing time.
+Just remember that in multilevel page table relatively very less memory is required.
+If we consider that the process uses its entire address space then all page tables are required, even then it uses relatively very less memory to store the page tables.
 
 Takes relatively larger time to access the data as it has to traverse through the tables.
 
