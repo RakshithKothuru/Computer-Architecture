@@ -612,6 +612,8 @@ Therefore:
 
 > A TLB miss does not necessarily cause a page fault.
 
+---
+
 ## 9. Page Fault
 
 A **page fault** occurs when an address translation requires operating-system intervention.
@@ -658,8 +660,6 @@ A page fault is not always an error:
 | Valid page not yet allocated | Allocate a new page |
 | Invalid virtual address | Report an access violation |
 | Write to a read-only page | Report a protection fault |
-
----
 
 
 ---
