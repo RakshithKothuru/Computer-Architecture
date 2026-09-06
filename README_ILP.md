@@ -215,6 +215,16 @@ for (i = 1000; i > 0; i--)
     x[i] = x[i] + s;
 ```
 
+```assembly
+LOOP:
+    L.D    F0, 0(R1)       # F0 = x[i]
+    ADD.D  F4, F0, F2      # F4 = x[i] + s
+    S.D    F4, 0(R1)       # x[i] = F4
+    DADDI  R1, R1, -8      # Move to x[i-1]
+    DADDI  R2, R2, -1      # Decrement loop counter
+    BNEZ   R2, LOOP        # Repeat until R2 = 0
+```
+
 Every iteration requires:
 
 - Loading an element.
