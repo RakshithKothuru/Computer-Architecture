@@ -381,37 +381,6 @@ During renaming:
 
 A later instruction reading `R1` will therefore read its latest value from `P10`.
 
-## Important Ordering Rule
-
-For an instruction such as:
-
-```assembly
-ADD R1, R1, R2
-```
-
-The processor must rename the **source registers before updating the destination mapping**.
-
-Initially:
-
-```text
-R1 → P5
-R2 → P2
-```
-
-Correct renaming:
-
-```assembly
-ADD P10, P5, P2
-```
-
-Then, the RAT is updated:
-
-```text
-R1 → P10
-```
-
-The old value of `R1` comes from `P5`, while the new value is written to `P10`.
-
 ## What Register Renaming Removes
 
 | Dependency | Meaning | Removed by renaming? |
