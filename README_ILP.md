@@ -292,8 +292,6 @@ Excessive unrolling can:
 
 ## 3.3 Register Renaming by the Compiler
 
-## Register Renaming
-
 Register renaming is a hardware technique used in **out-of-order processors** to eliminate **false data dependencies** between instructions.
 
 Consider:
