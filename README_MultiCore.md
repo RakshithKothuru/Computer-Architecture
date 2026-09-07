@@ -6,6 +6,7 @@
 2. [Cache Coherence](#2-cache-coherence)
 3. [Coherence Protocols](#3-coherence-protocols)
 4. [MESI Protocol](#4-mesi-protocol)
+5. [False Sharing](#5-false-sharing)
 
 ---
 
@@ -749,6 +750,25 @@ Memory: X = 20
 
 Both cores now observe the latest value.
 
+### Step 5: Core 1 Writes X = 30
+
+Core 1 currently holds the line in the `Shared` state. Therefore, it sends a `BusUpgr` transaction to invalidate Core 0’s shared copy.
+
+```text
+Core 0: S → I
+Core 1: S → M
+```
+
+Result:
+
+```text
+Core 0: X, I
+Core 1: X = 30, M
+Memory: X = 20
+```
+
+Core 1 now contains the only valid and latest copy of `X`. Main memory remains temporarily stale until the modified line is written back.
+
 ## Why Is the Exclusive State Useful?
 
 Suppose a processor reads a cache line that no other cache contains.
@@ -778,3 +798,57 @@ E → M
 ```
 
 Therefore, the Exclusive state reduces coherence traffic when a cache line is accessed by only one core.
+
+---
+
+# 5. False Sharing
+
+Cache coherence operates on an entire **cache line**, not on individual variables.
+
+Suppose two independent variables, `A` and `B`, are stored in the same cache line:
+
+```text
+Cache line: [ A | B ]
+```
+
+Assume:
+
+- Core 0 repeatedly writes to `A`.
+- Core 1 repeatedly writes to `B`.
+
+Even though the cores access different variables, each write requires ownership of the complete cache line.
+
+```text
+Core 0 writes A → Core 1's cache line is invalidated
+Core 1 writes B → Core 0's cache line is invalidated
+```
+
+The cache line repeatedly moves between the two cores. This behavior is called **cache-line ping-pong**.
+
+This is known as **false sharing** because the cores do not actually share the same variable, but their variables occupy the same cache line.
+
+False sharing does not produce incorrect results, but it can severely reduce performance because of:
+
+- Repeated cache-line invalidations
+- Additional coherence traffic
+- Frequent cache misses
+- Increased interconnect traffic and latency
+
+False sharing can be reduced by:
+
+- Placing frequently modified variables in separate cache lines
+- Adding padding between variables
+- Aligning variables to cache-line boundaries
+- Giving each thread separate data structures
+
+```c
+struct counters {
+    int core0_count;
+    char padding[60];
+    int core1_count;
+};
+```
+
+If the cache-line size is 64 bytes, the padding can help place the two counters in different cache lines.
+
+> False sharing is a performance problem, not a correctness problem.
