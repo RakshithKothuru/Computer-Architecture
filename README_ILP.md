@@ -980,15 +980,15 @@ If a processor can issue at most `n` instructions per cycle, it is called an **n
 
 The ideal CPI is:
 
-\[
+$$
 CPI_{\text{ideal}} = \frac{1}{n}
-\]
+$$
 
 For a four-issue processor:
 
-\[
+$$
 CPI_{\text{ideal}} = \frac{1}{4} = 0.25
-\]
+$$
 
 This is only an ideal value.
 
