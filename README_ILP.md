@@ -837,6 +837,16 @@ Although instructions execute and finish out of order, they commit in program or
 
 ---
 
+## Tomasulo’s Algorithm with Reorder Buffer
+
+<p align="center">
+  <img src="Images/Tomasulo's Algorithm with ROB.png"
+       alt="Tomasulo architecture with reservation stations, reorder buffer and common data bus"
+       width="750">
+</p>
+
+---
+
 ## 6.3 Register Instruction Commit
 
 When a register-writing instruction reaches the ROB head:
