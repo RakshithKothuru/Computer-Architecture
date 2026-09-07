@@ -292,31 +292,137 @@ Excessive unrolling can:
 
 ## 3.3 Register Renaming by the Compiler
 
-When unrolling loops, the same registers from the original loop cannot always be reused.
+## Register Renaming
+
+Register renaming is a hardware technique used in **out-of-order processors** to eliminate **false data dependencies** between instructions.
 
 Consider:
 
 ```assembly
-L.D   F0, 0(R1)
-ADD.D F4, F0, F2
-
-L.D   F0, -8(R1)
-ADD.D F4, F0, F2
+I1: R1 = R2 + R3
+I2: R4 = R1 + R5
+I3: R1 = R6 + R7
+I4: R8 = R1 + R9
 ```
 
-The repeated use of `F0` and `F4` creates name dependencies.
+Dependencies:
 
-The compiler can rename the registers:
+- `I1 → I2`: **RAW dependency** — true dependency.
+- `I1 → I3`: **WAW dependency** — false dependency.
+- `I2 → I3`: **WAR dependency** — false dependency.
+- `I3 → I4`: **RAW dependency** — true dependency.
+
+`I1` and `I3` both write to architectural register `R1`, but their results are logically different values.
+
+### Renaming
+
+The processor maps architectural registers to a larger set of physical registers:
 
 ```assembly
-L.D   F0, 0(R1)
-ADD.D F4, F0, F2
-
-L.D   F6, -8(R1)
-ADD.D F8, F6, F2
+I1: P10 = P2 + P3
+I2: P11 = P10 + P5
+I3: P12 = P6 + P7
+I4: P13 = P12 + P9
 ```
 
-This removes false dependencies and exposes more parallelism.
+Now:
+
+- `I1` writes to `P10`.
+- `I3` writes to `P12`.
+- The WAW and WAR dependencies disappear.
+- Only the true RAW dependencies remain.
+
+Therefore, `I3` does not need to wait for `I1` or `I2` and may execute earlier if its operands are ready.
+
+## How Hardware Performs Renaming
+
+The processor typically maintains:
+
+- **Architectural Register File (ARF):** Registers visible to the program, such as `R0–R31`.
+- **Physical Register File (PRF):** A larger collection of internal registers.
+- **Register Alias Table (RAT):** Maps each architectural register to its latest physical register.
+- **Free List:** Tracks unused physical registers.
+- **Reorder Buffer (ROB):** Preserves program order during retirement and supports precise exceptions.
+
+Suppose initially:
+
+```text
+R1 → P1
+R2 → P2
+R3 → P3
+```
+
+For the instruction:
+
+```assembly
+ADD R1, R2, R3
+```
+
+During renaming:
+
+1. Source registers are looked up in the RAT:
+
+   ```text
+   R2 → P2
+   R3 → P3
+   ```
+
+2. A free physical register, say `P10`, is allocated for destination `R1`.
+
+3. The instruction becomes:
+
+   ```assembly
+   ADD P10, P2, P3
+   ```
+
+4. The RAT is updated:
+
+   ```text
+   R1 → P10
+   ```
+
+A later instruction reading `R1` will therefore read its latest value from `P10`.
+
+## Important Ordering Rule
+
+For an instruction such as:
+
+```assembly
+ADD R1, R1, R2
+```
+
+The processor must rename the **source registers before updating the destination mapping**.
+
+Initially:
+
+```text
+R1 → P5
+R2 → P2
+```
+
+Correct renaming:
+
+```assembly
+ADD P10, P5, P2
+```
+
+Then, the RAT is updated:
+
+```text
+R1 → P10
+```
+
+The old value of `R1` comes from `P5`, while the new value is written to `P10`.
+
+## What Register Renaming Removes
+
+| Dependency | Meaning | Removed by renaming? |
+|---|---|---|
+| RAW | Read After Write | No |
+| WAR | Write After Read | Yes |
+| WAW | Write After Write | Yes |
+
+RAW cannot be removed because it represents an actual flow of data between instructions.
 
 ---
 
