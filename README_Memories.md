@@ -1,10 +1,27 @@
 # Semiconductor Memories
 
-## 1. Memory Fundamentals
+## Index
+
+1. [Memory Basics](#1-memory-basics)
+2. [Memory Organization](#2-memory-organization)
+3. [RAM](#3-ram)
+4. [SRAM](#4-sram)
+5. [DRAM](#5-dram)
+6. [ROM](#6-rom)
+7. [Flash Memory](#8-flash-memory)
+8. [Programmable Logic Devices](#9-programmable-logic-devices)
+9. [Modern DRAM](#11-modern-dram)
+10. [Memory Timing and Power](#12-memory-timing-and-power)
+11. [Memory Expansion](#13-memory-expansion)
+12. [Important Comparisons](#14-important-comparisons)
+
+---
+
+## 1. Memory Basics
+
+A semiconductor memory stores binary information using electronic circuits.
 
 ### Memory Hierarchy
-
-Memory is arranged based on speed, capacity and cost:
 
 1. Registers
 2. Cache
@@ -26,12 +43,14 @@ Memory is represented as:
 
 Example:
 
-`1K × 8` means:
+`1K × 8`
 
-- 1024 words
-- 8 bits per word
-- 10 address lines
-- 8 data lines
+This memory contains:
+
+- `1024` words
+- `8` bits per word
+- `10` address lines
+- `8` data lines
 
 Total capacity:
 
@@ -41,69 +60,81 @@ For `N` memory locations:
 
 `Number of address lines = log₂(N)`
 
-### Read Operation
+For `M` bits per word:
 
-1. Apply the required address.
+`Number of data lines = M`
+
+### Basic Memory Operations
+
+#### Read
+
+1. Apply the address.
 2. Enable the memory chip.
 3. Activate the read control.
-4. Data from the selected location appears at the output.
+4. Read data from the output.
 
-A read operation normally does not modify the stored data.
+A read operation normally does not change the stored data.
 
-### Write Operation
+#### Write
 
-1. Apply the required address.
+1. Apply the address.
 2. Apply the input data.
 3. Enable the memory chip.
 4. Activate the write control.
-5. The data is stored at the selected location.
+5. Store the data in the selected location.
 
-### Memory Performance
+### Memory Characteristics
 
-- **Access time:** Time between applying an address and obtaining valid data.
-- **Memory cycle time:** Minimum time between the beginning of two consecutive memory operations.
+- **Access time:** Time from applying an address until valid data becomes available.
+- **Cycle time:** Minimum time between two consecutive memory operations.
 - **Bandwidth:** Amount of data transferred per unit time.
+- **Density:** Number of bits stored per unit chip area.
+- **Volatility:** Whether the memory retains data without power.
 
 `Memory cycle time ≥ Access time`
 
 `Bandwidth = Data transferred / Time`
 
-### Volatile and Non-Volatile Memory
+### Volatile vs Non-Volatile Memory
 
 | Volatile Memory | Non-Volatile Memory |
 |---|---|
 | Loses data when power is removed | Retains data without power |
-| Used as working memory | Used for long-term storage |
+| Used as temporary working memory | Used for permanent storage |
 | SRAM and DRAM | ROM, EEPROM and Flash |
 
 ### Access Methods
 
-- **Random access:** Any location can be accessed in approximately equal time.  
-  Examples: SRAM and DRAM.
-
-- **Sequential access:** Data is accessed in a fixed sequence.  
-  Example: Magnetic tape.
-
-- **Associative access:** Data is searched using its contents instead of its address.  
-  Example: Content-addressable memory.
+- **Random access:** Any location can be accessed in approximately equal time.
+- **Sequential access:** Locations are accessed in a fixed sequence.
+- **Associative access:** Data is searched using its contents instead of its address.
 
 ---
 
-## 2. Memory-Chip Organization
+## 2. Memory Organization
+
+A memory chip contains:
+
+- Memory-cell array
+- Row decoder
+- Column decoder
+- Word lines
+- Bit lines
+- Sense amplifiers
+- Write drivers
+- Control circuitry
 
 ### Memory-Cell Array
 
-Memory cells are arranged in rows and columns.
-
+- Memory cells are arranged in rows and columns.
 - Each cell normally stores one bit.
-- A row generally represents a memory word.
-- The row-column structure reduces decoding and wiring complexity.
+- A row generally contains one or more memory words.
 
 ### Word Line
 
 A word line selects a row of memory cells.
 
-When a word line is activated, the cells connected to that row become accessible.
+When a word line is activated, the cells connected to that row can be accessed.
 
 ### Bit Lines
 
@@ -112,173 +143,129 @@ Bit lines transfer data between the memory cells and peripheral circuits.
 A memory may use:
 
 - A single bit line
-- Two complementary bit lines: `BL` and `BL̅`
+- Complementary bit lines `BL` and `BL̅`
 
-### Row and Column Decoders
+### Row Decoder
 
-The address selects the required memory location.
+The row decoder receives the row-address bits and activates one word line.
 
-- **Row decoder:** Activates one word line.
-- **Column decoder:** Selects the required column or group of columns.
+An `n`-bit decoder can select one of `2ⁿ` rows.
 
-An `n`-bit decoder can select one of `2ⁿ` outputs.
+### Column Decoder
+
+The column decoder selects the required bit or group of bits from the activated row.
 
 ### Sense Amplifier
 
-A memory cell may produce only a small voltage change on the bit line.
+The memory cell may produce only a small voltage change on the bit line.
 
 The sense amplifier:
 
 - Detects the small voltage difference
-- Amplifies it to a full logic level
-- Improves reading speed and reliability
+- Amplifies it into a full logic level
+- Improves read speed and reliability
 
 ### Write Driver
 
-The write driver places strong logic values on the bit lines during a write operation.
+The write driver places strong logic values on the bit lines and forces the selected cell to store the required data.
 
-It forces the selected memory cell to store the required value.
+### Common Memory Signals
 
-### Memory Signals
-
-Common memory signals include:
-
-- **Address lines:** Select a memory location.
+- **Address lines:** Select the memory location.
 - **Data lines:** Carry input or output data.
-- **Chip Select/Enable:** Activates the memory chip.
-- **Read Enable/Output Enable:** Enables the output during reading.
+- **Chip Select:** Enables the memory chip.
+- **Output Enable:** Enables the output during reading.
 - **Write Enable:** Controls the write operation.
-
-### Memory Expansion
-
-#### Increasing the Number of Words
-
-Multiple memory chips can be used to increase the number of stored words.
-
-Example:
-
-`Two 1K × 8 chips → One 2K × 8 memory`
-
-- Address and data lines are connected appropriately.
-- Higher address bits select the required chip.
-
-#### Increasing the Word Length
-
-Multiple memory chips can be operated in parallel to increase the number of bits per word.
-
-Example:
-
-`Two 1K × 4 chips → One 1K × 8 memory`
-
-Both chips receive the same address, but each chip provides a different part of the word.
 
 ---
 
-## 3. SRAM
+## 3. RAM
+
+RAM stands for **Random-Access Memory**.
+
+- Any memory location can be accessed directly.
+- RAM supports both read and write operations.
+- It is generally volatile.
+
+The two major types are:
+
+1. SRAM
+2. DRAM
+
+---
+
+## 4. SRAM
 
 SRAM stands for **Static Random-Access Memory**.
 
-It stores data using a bistable circuit and does not require periodic refresh while power is present.
+It stores data using a bistable latch and does not require periodic refresh while power is present.
 
 ### 6T SRAM Cell
 
 A standard SRAM cell contains six transistors:
 
 - Four transistors form two cross-coupled inverters.
-- Two access transistors connect the cell to the bit lines.
-- The word line controls the access transistors.
-
-The two cross-coupled inverters store one bit as two complementary internal values.
+- Two access transistors connect the cell to `BL` and `BL̅`.
+- A word line controls the access transistors.
 
 ### Hold Operation
 
-During the hold operation:
-
-- The word line is LOW.
-- The access transistors are OFF.
-- The cell is disconnected from the bit lines.
-- The cross-coupled inverters retain the stored value.
+- Word line is LOW.
+- Access transistors are OFF.
+- The cell is isolated from the bit lines.
+- Cross-coupled inverters retain the stored value.
 
 ### Read Operation
 
 1. `BL` and `BL̅` are precharged.
 2. The word line is activated.
-3. The stored value causes one bit line to discharge slightly.
-4. The other bit line remains near its precharged value.
-5. The sense amplifier detects the difference.
-6. The stored data appears at the output.
+3. The stored value slightly discharges one bit line.
+4. The sense amplifier detects the difference between the bit lines.
+5. The output is produced.
 
-The read operation should not change the stored value.
+The read operation is non-destructive.
 
 ### Write Operation
 
-1. The write driver places complementary data on `BL` and `BL̅`.
+1. The write driver applies complementary values to `BL` and `BL̅`.
 2. The word line is activated.
-3. The bit-line voltages force the internal nodes to the required values.
+3. The bit-line voltages force the internal nodes to the new state.
 4. The word line is deactivated.
-5. The cross-coupled inverters retain the new value.
+5. The cell retains the new value.
 
-### Precharge and Sense Amplification
+### SRAM Cell Requirements
 
-Before a read:
+- **Read stability:** Reading should not accidentally flip the stored value.
+- **Write ability:** The write driver should be able to overwrite the old value.
+- **Hold stability:** The cell should retain data when it is not selected.
 
-- Both bit lines are normally precharged to the same voltage.
-- The selected cell creates a small voltage difference between them.
-- The sense amplifier converts this difference into a full logic value.
-
-### Read Stability
-
-Read stability is the ability of the SRAM cell to retain its value during a read operation.
-
-The pull-down transistor is generally made stronger than the access transistor so that reading does not accidentally flip the cell.
-
-### Write Ability
-
-Write ability is the ease with which the stored value can be changed.
-
-The access transistor must be sufficiently strong compared with the pull-up transistor to overwrite the previous value.
-
-### SRAM Timing
-
-Important SRAM timing parameters include:
-
-- Address access time
-- Read cycle time
-- Write cycle time
-- Write pulse width
-- Data setup time
-- Data hold time
-
-### SRAM Characteristics
-
-#### Advantages
+### Advantages
 
 - Very fast
 - No refresh required
-- Read operation is non-destructive
+- Non-destructive read
 - Simple interface
 
-#### Limitations
+### Limitations
 
-- Requires more transistors per bit
 - Large cell area
-- Lower storage density
+- Lower density
 - Higher cost per bit
 
-#### Applications
+### Applications
 
 - Processor caches
 - Register files
-- Small on-chip memories
+- On-chip memories
 - Buffers
 
 ---
 
-## 4. DRAM
+## 5. DRAM
 
 DRAM stands for **Dynamic Random-Access Memory**.
 
-It stores data as electrical charge in a capacitor.
+It stores data as charge in a capacitor.
 
 ### 1T–1C DRAM Cell
 
@@ -287,17 +274,16 @@ A DRAM cell contains:
 - One access transistor
 - One storage capacitor
 
-The word line controls the access transistor, while the bit line is used for reading and writing.
+The word line controls the transistor, and the bit line is used for reading and writing.
 
 ### Write Operation
 
-1. The required data is driven onto the bit line.
+1. Data is applied to the bit line.
 2. The word line is activated.
-3. The access transistor turns ON.
-4. The storage capacitor is charged or discharged.
-5. The word line is deactivated.
+3. The capacitor is charged or discharged.
+4. The word line is deactivated.
 
-The charged and discharged states represent logic `1` and logic `0`.
+The capacitor's charged and discharged conditions represent binary values.
 
 ### Read Operation
 
@@ -305,102 +291,126 @@ The charged and discharged states represent logic `1` and logic `0`.
 2. The word line is activated.
 3. Charge sharing occurs between the capacitor and bit line.
 4. A small voltage change appears on the bit line.
-5. The sense amplifier detects and amplifies this change.
-6. The stored value is restored to the capacitor.
+5. The sense amplifier detects the stored value.
+6. The value is restored to the capacitor.
 
-### Destructive Read and Restoration
+### Destructive Read
 
-Reading a DRAM cell disturbs the charge stored in its capacitor.
+Reading disturbs the charge stored in the capacitor.
 
 Therefore:
 
-- The read operation is destructive.
-- The detected value must be written back into the cell.
+- DRAM reading is destructive.
+- The read value must be written back after sensing.
 - This process is called restoration.
 
-### Leakage and Refresh
+### Refresh
 
-The capacitor gradually loses charge because of leakage current.
+The capacitor gradually loses charge because of leakage.
 
-Therefore, every DRAM row must be periodically read and restored. This process is called **refresh**.
+Therefore, DRAM cells must be periodically read and restored. This process is called **refresh**.
 
 Refresh:
 
 - Preserves stored data
 - Consumes power
-- Temporarily occupies the memory
-- Is managed by the memory controller
+- Uses memory cycles
+- Is controlled by the memory controller
 
-### DRAM Array Organization
+### DRAM Array and Row Buffer
 
-DRAM cells are arranged into rows and columns.
+- DRAM is arranged into rows and columns.
+- Activating a row transfers its contents to the sense amplifiers.
+- These sense amplifiers collectively act as the row buffer.
+- A column is then selected from the active row.
 
-- The row decoder activates one word line.
-- The selected row transfers data to the sense amplifiers.
-- The column decoder selects the required part of that row.
-
-### Row Buffer
-
-The sense amplifiers that hold the active row collectively form the **row buffer**.
-
-- Accessing another column in the open row is relatively fast.
-- Accessing a different row requires closing the current row and opening the new row.
+Accessing the already-open row is faster than opening a different row.
 
 ### RAS and CAS
 
-DRAM can use the same external address pins for row and column addresses.
+DRAM can use the same pins for row and column addresses.
 
-- **RAS:** Row Address Strobe; captures the row address.
-- **CAS:** Column Address Strobe; captures the column address.
+- **RAS:** Row Address Strobe
+- **CAS:** Column Address Strobe
 
-This technique reduces the required number of address pins.
+This reduces the number of external address pins.
 
-### SRAM vs DRAM
+### Advantages
 
-| Feature | SRAM | DRAM |
-|---|---|---|
-| Storage element | Bistable latch | Capacitor |
-| Typical cell | 6 transistors | 1 transistor and 1 capacitor |
-| Refresh | Not required | Required |
-| Read operation | Non-destructive | Destructive |
-| Speed | Faster | Slower |
-| Density | Lower | Higher |
-| Cost per bit | Higher | Lower |
-| Main application | Cache memory | Main memory |
+- Small cell area
+- High density
+- Low cost per bit
+- Suitable for large memories
+
+### Limitations
+
+- Slower than SRAM
+- Requires refresh
+- Destructive read
+- More complex control
+
+### Applications
+
+- Main memory
+- Graphics memory
+- Large memory systems
 
 ---
 
-## 5. ROM
+## 6. ROM
 
 ROM stands for **Read-Only Memory**.
 
-It is non-volatile and retains its contents even when power is removed.
+- It is non-volatile.
+- It retains data without power.
+- During normal operation, its contents are mainly read.
+- Programming and erasing depend on the ROM type.
 
-During normal system operation, ROM is mainly read. Depending on its type, it may be programmed or erased using a special procedure.
+### ROM Structure
 
-### ROM Organization
+A ROM can be viewed as:
 
-A ROM contains:
+- A fixed decoder generating minterms
+- A stored connection array
+- Output circuitry
 
-- Address decoder
-- Memory-cell array
-- Output or sensing circuitry
+For `n` inputs:
 
-The stored connection pattern determines the output data for each address.
+`Number of decoder outputs = 2ⁿ`
+
+Each address selects one stored output word.
+
+### ROM as a Logic Device
+
+ROM can implement combinational logic.
+
+- Input variables act as address lines.
+- The decoder generates all possible minterms.
+- Stored connections combine the required minterms.
+- Data outputs represent the required Boolean functions.
+
+In a ROM:
+
+- The AND array is fixed as a decoder.
+- The OR array is programmable.
+
+---
+
+## 7. Types of ROM
 
 ### Mask ROM
 
-- Programmed during chip fabrication
-- Cannot be modified after manufacturing
-- Low cost for large production volumes
-- Used when the stored data is permanently fixed
+- Programmed during manufacturing
+- Cannot be modified later
+- Suitable for large-volume production
+- Low cost per bit in mass production
 
 ### PROM
 
 PROM stands for **Programmable Read-Only Memory**.
 
-- Programmed by the user
-- Can be programmed only once
+- Supplied initially unprogrammed
+- Programmed once by the user
 - Uses fuses or antifuses
 - Cannot normally be erased
 
@@ -410,31 +420,34 @@ EPROM stands for **Erasable Programmable Read-Only Memory**.
 
 - Electrically programmed
 - Erased using ultraviolet light
-- The complete chip is usually erased together
+- The entire chip is usually erased
 - Can be reprogrammed after erasure
 
 ### EEPROM
 
 EEPROM stands for **Electrically Erasable Programmable Read-Only Memory**.
 
-- Electrically programmed
-- Electrically erased
-- Can often erase individual bytes
+- Electrically programmed and erased
+- Supports byte-level erasure
 - Writing is slower than reading
-- Supports a limited number of write cycles
+- Has a limited number of write cycles
 
 ### Flash Memory
 
-Flash memory is a type of EEPROM that erases data in larger blocks instead of individual bytes.
+Flash is a type of EEPROM.
 
-Advantages include:
+- Electrically programmed
+- Electrically erased
+- Erased in blocks instead of individual bytes
+- Offers high density and low cost per bit
 
-- High storage density
-- Faster block erase
-- Lower cost per bit
-- Non-volatile storage
+---
 
-Applications include:
+## 8. Flash Memory
+
+Flash memory is widely used for non-volatile storage.
+
+### Applications
 
 - Mobile internal storage
 - Solid-state drives
@@ -442,87 +455,211 @@ Applications include:
 - USB drives
 - Firmware storage
 
-### NOR Flash vs NAND Flash
+### NOR Flash
 
-| NOR Flash | NAND Flash |
-|---|---|
-| Fast random reads | Fast block reads and writes |
-| Supports direct code execution | Code is generally copied to RAM before execution |
-| Lower density | Higher density |
-| Higher cost per bit | Lower cost per bit |
-| Used for firmware storage | Used for mass storage |
+- Fast random read
+- Supports direct code execution
+- Lower density
+- Higher cost per bit
+- Commonly used for firmware
+
+### NAND Flash
+
+- High density
+- Lower cost per bit
+- Efficient block reading and writing
+- Commonly used for mass storage
+- Data is generally copied to RAM before execution
+
+### NOR vs NAND Flash
+
+| Feature | NOR Flash | NAND Flash |
+|---|---|---|
+| Random read | Faster | Slower |
+| Block operations | Slower | Faster |
+| Density | Lower | Higher |
+| Cost per bit | Higher | Lower |
+| Direct code execution | Supported | Generally not supported |
+| Main application | Firmware | Mass storage |
 
 ---
 
-## 6. Modern DRAM Concepts
+## 9. Programmable Logic Devices
+
+A **Programmable Logic Device (PLD)** is an integrated circuit whose internal logic connections can be programmed to implement digital functions.
+
+Instead of connecting many individual logic gates, the required Boolean functions are programmed into a single device.
+
+### Basic PLD Structure
+
+PLDs commonly use two logic arrays:
+
+1. **AND array:** Generates product terms.
+2. **OR array:** Combines product terms to form sum-of-products expressions.
+
+Example:
+
+`F = A̅B + AC`
+
+The AND array generates:
+
+- `A̅B`
+- `AC`
+
+The OR array combines them to produce `F`.
+
+### Types of PLDs
+
+Basic PLDs include:
+
+- PROM
+- PLA
+- PAL
+
+More advanced devices include:
+
+- CPLD
+- FPGA
+
+---
+
+## 10. PROM, PLA and PAL
+
+### PROM as a PLD
+
+In a PROM:
+
+- AND array is fixed.
+- OR array is programmable.
+
+The fixed decoder generates all possible minterms. The programmable OR array selects the minterms required for each output.
+
+#### Advantages
+
+- Can implement any combinational function
+- Simple structure
+- Useful for truth-table implementation
+
+#### Limitations
+
+- Generates all possible minterms
+- May waste hardware when only a few product terms are required
+
+### PLA
+
+PLA stands for **Programmable Logic Array**.
+
+In a PLA:
+
+- AND array is programmable.
+- OR array is programmable.
+
+Only the required product terms are generated and combined.
+
+#### Advantages
+
+- Highly flexible
+- Generates only the required product terms
+- Product terms can be shared between outputs
+
+#### Limitations
+
+- More complex
+- Generally slower and costlier than PAL
+
+### PAL
+
+PAL stands for **Programmable Array Logic**.
+
+In a PAL:
+
+- AND array is programmable.
+- OR array is fixed.
+
+The required product terms are generated using the programmable AND array. The fixed OR array limits how those product terms can be combined.
+
+#### Advantages
+
+- Simpler than PLA
+- Faster than PLA
+- Easier to manufacture
+
+#### Limitations
+
+- Less flexible than PLA
+- Limited number of product terms for each output
+- Product-term sharing is restricted
+
+### PROM vs PLA vs PAL
+
+| Device | AND Array | OR Array | Main Feature |
+|---|---|---|---|
+| PROM | Fixed | Programmable | Generates all minterms |
+| PLA | Programmable | Programmable | Most flexible |
+| PAL | Programmable | Fixed | Faster and simpler |
+
+### Flexibility Order
+
+`PLA > PAL > PROM`
+
+PLA is generally the most flexible because both arrays are programmable.
+
+### Complexity and Speed
+
+- PROM may waste hardware by generating every minterm.
+- PLA provides maximum flexibility but has two programmable arrays.
+- PAL is faster and simpler because only the AND array is programmable.
+
+---
+
+## 11. Modern DRAM
 
 ### SDRAM
 
 SDRAM stands for **Synchronous Dynamic Random-Access Memory**.
 
-Its commands and data transfers are synchronized with a clock.
-
-This allows:
+Its operations are synchronized with a clock, allowing:
 
 - Predictable timing
 - Pipelined operations
-- Burst data transfers
-- Better coordination with the processor
+- Burst transfers
 
 ### DDR SDRAM
 
 DDR stands for **Double Data Rate**.
 
-DDR memory transfers data on both:
+DDR transfers data on both:
 
 - Rising edge of the clock
 - Falling edge of the clock
 
-Therefore, a `1 GHz` memory clock can provide approximately `2 billion transfers per second`.
+Thus, a `1 GHz` clock can provide approximately `2 billion transfers per second`.
 
 ### Banks, Rows and Columns
 
-DRAM is divided into multiple banks.
+DRAM is divided into multiple banks. Each bank contains rows, columns and a row buffer.
 
-Each bank contains:
-
-- Rows
-- Columns
-- A row buffer
-
-Multiple banks allow the memory controller to overlap operations and improve bandwidth.
-
-A typical access involves:
+A typical DRAM access involves:
 
 1. **Activate:** Open the required row.
-2. **Read/Write:** Select the required columns.
+2. **Read/Write:** Access the required columns.
 3. **Precharge:** Close the row before opening another row in that bank.
+
+Multiple banks allow operations to overlap and improve bandwidth.
 
 ### Burst Operation
 
 A burst transfers multiple consecutive data units after a single read or write command.
 
-Benefits include:
+Advantages:
 
 - Reduced command overhead
 - Higher bandwidth
-- Efficient transfer of cache lines
-
-### DDR Generations
-
-Newer DDR generations generally provide:
-
-- Higher data-transfer rates
-- Greater bandwidth
-- Lower operating voltage
-- Improved power management
-- Greater internal parallelism
-
-The external transfer rate can increase without operating the internal memory-cell array at the same high frequency.
+- Efficient cache-line transfers
 
 ### Prefetch Architecture
 
-DDR memory fetches multiple bits internally and transfers them sequentially through faster external data pins.
+DDR internally fetches multiple bits and sends them sequentially through faster external data pins.
 
 Examples:
 
@@ -531,65 +668,58 @@ Examples:
 - DDR3: `8n` prefetch
 - DDR4: `8n` prefetch
 
-Prefetch allows a high external data rate while keeping the internal memory array relatively slower.
-
 ### Latency and Bandwidth
 
-- **Latency:** Time required to complete a particular memory access.
+- **Latency:** Time required to complete one memory access.
 - **Bandwidth:** Amount of data transferred per unit time.
 
-A memory can have high bandwidth while still having relatively high latency.
+A memory can have high bandwidth while still having relatively high access latency.
 
 ### Memory Controller
 
 The memory controller connects the processor or SoC to DRAM.
 
-Its responsibilities include:
+It performs:
 
-- Generating memory commands
 - Address mapping
-- Scheduling reads and writes
-- Controlling refresh
-- Managing DRAM banks
-- Enforcing timing constraints
-- Coordinating data transfers
+- Command generation
+- Read and write scheduling
+- Refresh control
+- Bank management
+- Timing-constraint enforcement
+- Data-transfer coordination
 
 ---
 
-## 7. Memory Timing and Power
+## 12. Memory Timing and Power
 
 ### Read Timing
 
-During a read operation:
-
 1. Address and control signals are applied.
-2. The required row and column are selected.
+2. The selected row and column are activated.
 3. The memory cell affects the bit line.
-4. The sense amplifier detects the stored value.
+4. The sense amplifier detects the value.
 5. Valid data appears at the output.
 
-The delay between applying the address and obtaining valid data is called the **read access time**.
+**Read access time** is the time between applying the address and receiving valid output data.
 
 ### Write Timing
 
-During a write operation:
-
-1. The address is applied.
-2. Input data is placed on the data lines.
-3. Write enable is activated.
-4. The selected cell stores the input data.
-5. Address and data must remain stable for the required interval.
+1. Address and input data are applied.
+2. Write enable is activated.
+3. The selected cell stores the data.
+4. Address and data are kept stable for the required duration.
 
 ### Setup and Hold Time
 
-- **Setup time:** Minimum time for which an input must remain stable before the active clock or control edge.
-- **Hold time:** Minimum time for which an input must remain stable after the active clock or control edge.
+- **Setup time:** Minimum time for which an input must be stable before the active control or clock edge.
+- **Hold time:** Minimum time for which the input must remain stable after the active edge.
 
-Violating setup or hold requirements can result in an incorrect or unreliable operation.
+Violating these requirements can cause an incorrect or unreliable memory operation.
 
 ### Dynamic Power
 
-Dynamic power is consumed when circuit nodes switch between logic states.
+Dynamic power is consumed when memory nodes switch.
 
 `Pdynamic = αCV²f`
 
@@ -600,37 +730,109 @@ Where:
 - `V` = Supply voltage
 - `f` = Operating frequency
 
-Major sources of dynamic power include:
+Major sources include:
 
-- Charging and discharging bit lines
+- Bit-line charging and discharging
 - Word-line switching
-- Address decoders
+- Decoders
 - Sense amplifiers
-- Input/output circuitry
+- Input/output circuits
 
 ### Leakage Power
 
-Leakage power is consumed even when the memory is not switching.
+Leakage power is consumed even when the memory is inactive.
 
 `Pleakage = Ileakage × V`
 
-Leakage becomes significant in large memory arrays because millions of memory cells contribute leakage current.
+Leakage is significant in large memories because they contain millions of cells.
 
 ### Active and Standby Power
 
-- **Active power:** Power consumed during read, write, refresh and switching operations.
-- **Standby power:** Power consumed while the memory is powered but not actively accessed.
-
-DRAM consumes refresh power even when normal read and write operations are not taking place.
+- **Active power:** Consumed during read, write, refresh and switching.
+- **Standby power:** Consumed while the memory is powered but inactive.
+- **Refresh power:** Consumed by DRAM during periodic refresh.
 
 ### Power-Reduction Techniques
 
-- Reduce supply voltage.
+- Reduce the supply voltage.
 - Reduce unnecessary switching.
-- Activate only the required memory bank.
+- Activate only the required bank.
 - Apply clock gating to peripheral circuits.
 - Power-gate unused memory blocks.
 - Use low-leakage transistors.
-- Reduce unnecessary DRAM row activations.
-- Use low-power and self-refresh modes.
-- Keep frequently accessed data in the same open DRAM row.
+- Use DRAM self-refresh modes.
+- Reduce unnecessary row activations.
+
+---
+
+## 13. Memory Expansion
+
+### Increasing the Number of Words
+
+Memory chips are connected to increase the number of addressable locations.
+
+Example:
+
+`Two 1K × 8 chips → One 2K × 8 memory`
+
+- Lower address bits select a location inside each chip.
+- Higher address bits select the required chip.
+- Data width remains unchanged.
+
+### Increasing the Word Length
+
+Memory chips are connected in parallel to increase the number of bits in each word.
+
+Example:
+
+`Two 1K × 4 chips → One 1K × 8 memory`
+
+- Both chips receive the same address.
+- Both chips are enabled together.
+- Each chip provides four bits of the eight-bit word.
+
+### General Capacity
+
+For a memory organized as `N × M`:
+
+`Total capacity = N × M bits`
+
+`Address lines = log₂(N)`
+
+`Data lines = M`
+
+---
+
+## 14. Important Comparisons
+
+### RAM vs ROM
+
+| Feature | RAM | ROM |
+|---|---|---|
+| Normal operations | Read and write | Mainly read |
+| Volatility | Generally volatile | Non-volatile |
+| Data modification | Easy and frequent | Fixed or specially programmed |
+| Applications | Working memory | Firmware and fixed data |
+
+### SRAM vs DRAM
+
+| Feature | SRAM | DRAM |
+|---|---|---|
+| Storage element | Latch | Capacitor |
+| Cell structure | Typically 6T | 1T–1C |
+| Refresh | Not required | Required |
+| Read | Non-destructive | Destructive |
+| Speed | Higher | Lower |
+| Density | Lower | Higher |
+| Cost per bit | Higher | Lower |
+| Main application | Cache | Main memory |
+
+### ROM Types
+
+| Memory | Programming | Erasing |
+|---|---|---|
+| Mask ROM | During manufacturing | Not possible |
+| PROM | Once by user | Not possible |
+| EPROM | Electrically | UV light |
+| EEPROM | Electrically | Electrically, usually byte-wise |
+| Flash | Electrically | Electrically, block-wise |
