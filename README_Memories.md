@@ -394,9 +394,7 @@ In a ROM:
 - The AND array is fixed as a decoder.
 - The OR array is programmable.
 
----
-
-## 7. Types of ROM
+##  Types of ROM
 
 ### Mask ROM
 
@@ -443,7 +441,7 @@ Flash is a type of EEPROM.
 
 ---
 
-## 8. Flash Memory
+## 7. Flash Memory
 
 Flash memory is widely used for non-volatile storage.
 
@@ -484,7 +482,7 @@ Flash memory is widely used for non-volatile storage.
 
 ---
 
-## 9. Programmable Logic Devices
+## 8. Programmable Logic Devices
 
 A **Programmable Logic Device (PLD)** is an integrated circuit whose internal logic connections can be programmed to implement digital functions.
 
@@ -523,7 +521,7 @@ More advanced devices include:
 
 ---
 
-## 10. PROM, PLA and PAL
+## PROM, PLA and PAL
 
 ### PROM as a PLD
 
@@ -612,7 +610,7 @@ PLA is generally the most flexible because both arrays are programmable.
 
 ---
 
-## 11. Modern DRAM
+## 9. Modern DRAM
 
 ### SDRAM
 
@@ -691,7 +689,7 @@ It performs:
 
 ---
 
-## 12. Memory Timing and Power
+## 10. Memory Timing and Power
 
 ### Read Timing
 
@@ -765,7 +763,7 @@ Leakage is significant in large memories because they contain millions of cells.
 
 ---
 
-## 13. Memory Expansion
+## 11. Memory Expansion
 
 ### Increasing the Number of Words
 
@@ -803,7 +801,7 @@ For a memory organized as `N × M`:
 
 ---
 
-## 14. Important Comparisons
+## 12. Important Comparisons
 
 ### RAM vs ROM
 
