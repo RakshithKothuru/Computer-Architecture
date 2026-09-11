@@ -9,10 +9,9 @@
 5. [ROM and Non-Volatile Memories](#5-rom-and-non-volatile-memories)
 6. [Flash Memory](#6-flash-memory)
 7. [Programmable Logic Devices](#7-programmable-logic-devices)
-8. [Modern DRAM Concepts](#8-modern-dram-concepts)
-9. [Memory Timing and Power](#9-memory-timing-and-power)
-10. [Memory Redundancy](#10-memory-redundancy)
-11. [Important Comparisons](#11-important-comparisons)
+8. [Memory Timing and Power](#9-memory-timing-and-power)
+9. [Memory Redundancy](#10-memory-redundancy)
+10. [Important Comparisons](#11-important-comparisons)
 
 ---
 
@@ -646,199 +645,58 @@ EEPROM is commonly used for:
 - Device settings
 - Small amounts of firmware
 
-### 5.6 MRAM
-
-MRAM stands for **Magnetoresistive Random-Access Memory**.
-
-Unlike SRAM, DRAM and Flash, it stores data using magnetic states rather than electric charge.
-
-A common MRAM cell contains:
-
-- Magnetic tunnel junction
-- Fixed magnetic layer
-- Free magnetic layer
-- Tunnel barrier
-- Access transistor
-
-The relative orientation of the magnetic layers determines resistance:
-
-- Parallel orientation → Low resistance
-- Antiparallel orientation → High resistance
-
-MRAM is:
-
-- Non-volatile
-- Fast
-- Highly durable
-- Suitable for some embedded-memory applications
-
 ---
 
 ## 6. Flash Memory
 
 Flash memory is an electrically programmable and erasable non-volatile memory.
 
-It is a form of EEPROM in which data is erased in blocks rather than one byte at a time.
+It is a type of EEPROM, but unlike EEPROM, Flash erases data in blocks rather than individual bytes.
 
-### 6.1 Floating-Gate Flash Cell
+### Floating-Gate Cell
 
-A Flash cell is commonly implemented using a floating-gate MOSFET.
+A Flash cell commonly uses a floating-gate MOSFET.
 
-It contains:
+- The floating gate is electrically isolated by an oxide layer.
+- Electrons trapped on the floating gate remain present even without power.
+- The stored charge changes the transistor's threshold voltage.
 
-- Control gate
-- Electrically isolated floating gate
-- Insulating oxide
-- Source
-- Drain
-- Channel
+An erased cell has a lower threshold voltage and is conventionally read as logic `1`.
 
-The floating gate is surrounded by insulation, so trapped electrons can remain for years without power.
+A programmed cell contains trapped electrons, has a higher threshold voltage and is conventionally read as logic `0`.
 
-### 6.2 Threshold-Voltage Storage
+### Read Operation
 
-The charge stored on the floating gate changes the transistor's threshold voltage.
+1. A read voltage is applied to the control gate.
+2. A small voltage is applied between the source and drain.
+3. The sense amplifier checks whether the transistor conducts.
+4. The conduction state determines the stored value.
 
-#### Erased Cell
+Reading does not remove the charge and is therefore non-destructive.
 
-- Little or no negative charge is trapped.
-- Threshold voltage is relatively low.
-- The transistor turns ON during a read.
-- It is conventionally interpreted as logic `1`.
+### Program Operation
 
-#### Programmed Cell
+- A high voltage is used to place electrons onto the floating gate.
+- The trapped electrons increase the threshold voltage.
+- The programmed cell is conventionally read as logic `0`.
 
-- Electrons are trapped on the floating gate.
-- Threshold voltage increases.
-- The transistor remains OFF at the normal read voltage.
-- It is conventionally interpreted as logic `0`.
+### Erase Operation
 
-Therefore:
+- A high electric field removes electrons from the floating gate.
+- The threshold voltage decreases.
+- The erased cell is conventionally read as logic `1`.
+- Flash memory is erased in blocks or sectors.
 
-`Erased cell → Lower Vth → Conducts → Logic 1`
-
-`Programmed cell → Higher Vth → Does not conduct → Logic 0`
-
-### 6.3 Flash Read Operation
-
-1. A read voltage is applied to the selected word line.
-2. A small voltage is applied across the source and drain.
-3. The sense amplifier checks whether drain current flows.
-4. The current indicates the cell's threshold-voltage range.
-5. The corresponding logic value is produced.
-
-The read operation does not remove charge from the floating gate and is therefore non-destructive.
-
-### 6.4 Flash Program Operation
-
-Programming normally places electrons onto the floating gate.
-
-1. High programming voltages are generated internally using charge pumps.
-2. Suitable voltages are applied to the control gate and drain.
-3. Electrons enter the floating gate through hot-electron injection or tunnelling.
-4. The trapped charge increases the threshold voltage.
-5. The programmed cell is conventionally read as logic `0`.
-
-Flash generally cannot directly change a programmed `0` back to `1`. The corresponding erase block must first be erased.
-
-### 6.5 Flash Erase Operation
-
-1. A high electric field is applied across the tunnel oxide.
-2. Electrons tunnel out of the floating gate.
-3. The threshold voltage decreases.
-4. The erased cell is conventionally read as logic `1`.
-
-Flash erasure is performed over a block or sector rather than an individual bit.
-
-### 6.6 SLC, MLC, TLC and QLC
-
-A Flash cell can store one or more bits by using multiple threshold-voltage ranges.
-
-| Type | Bits per Cell | Number of States | Main Characteristic |
-|---|---:|---:|---|
-| SLC | 1 | 2 | Fastest and most reliable |
-| MLC | 2 | 4 | Higher density |
-| TLC | 3 | 8 | Common in mass storage |
-| QLC | 4 | 16 | Highest density but lower endurance |
-
-As the number of bits per cell increases:
-
-- Density increases.
-- Cost per bit decreases.
-- Programming becomes more complex.
-- Read margins decrease.
-- Endurance and reliability generally decrease.
-
-### 6.7 NAND Flash
-
-In NAND Flash:
-
-- Cells are connected in series to form a NAND string.
-- Multiple cells share one bit line.
-- Select transistors connect the string to the bit line and ground.
-- Unselected cells must conduct during the reading of a selected cell.
-
-NAND Flash is organized hierarchically:
-
-1. Cell
-2. Page
-3. Block
-4. Plane
-5. Die
-
-Typical operations:
-
-- Read at page level
-- Program at page level
-- Erase at block level
-
-#### Advantages
-
-- High density
-- Small area per bit
-- Low cost per bit
-- Efficient page and block operations
-
-#### Applications
-
-- SSDs
-- USB drives
-- Memory cards
-- Mobile internal storage
-
-### 6.8 NOR Flash
-
-In NOR Flash:
-
-- Cells are connected in parallel to bit lines.
-- Individual words or bytes can be accessed directly.
-- It provides faster random reads than NAND Flash.
-- It supports execute-in-place operation.
-
-#### Advantages
-
-- Fast random access
-- Direct code execution
-- Suitable for firmware and boot code
-
-#### Limitations
-
-- Lower density than NAND
-- Higher cost per bit
-- Slower erase and program operations
-
-### 6.9 NAND vs NOR Flash
+### NAND vs NOR Flash
 
 | Feature | NAND Flash | NOR Flash |
 |---|---|---|
 | Cell connection | Series | Parallel |
-| Read access | Page-oriented | Random byte/word access |
+| Access | Page-oriented | Random byte/word access |
 | Density | Higher | Lower |
 | Cost per bit | Lower | Higher |
-| Program unit | Page | Byte or word |
-| Erase unit | Block | Sector |
-| Execute in place | Generally not supported | Supported |
-| Main use | Mass storage | Firmware and boot code |
+| Direct code execution | Generally not supported | Supported |
+| Main use | SSDs, USB drives and mobile storage | Firmware and boot code |
 
 ---
 
