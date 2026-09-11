@@ -715,166 +715,30 @@ For example:
 
 The AND array generates `A̅B` and `AC`, and the OR array combines them.
 
-### 7.1 PROM as a PLD
+####The difference between PROM, PLA and PAL depends on which logic arrays are programmable:
 
-In a PROM:
+- **PROM:** Fixed AND array and programmable OR array.  
+  The fixed decoder generates all minterms, and the OR array selects the required ones. It can implement any combinational function but may generate unnecessary minterms.
 
-- AND array is fixed.
-- OR array is programmable.
+- **PLA (Programmable Logic Array):** Programmable AND and OR arrays.  
+  It generates only the required product terms and allows sharing between outputs, making it the most flexible but more complex.
 
-The fixed decoder generates all possible minterms. The programmable OR array selects the required minterms for each output.
+- **PAL (Programmable Array Logic):** Programmable AND array and fixed OR array.  
+  It is simpler and generally faster than PLA but has limited product terms and flexibility.
 
-#### Advantages
-
-- Can implement any combinational function
-- Directly implements a truth table
-
-#### Limitation
-
-- Generates every possible minterm even when only a few are required
-
-### 7.2 PLA
-
-PLA stands for **Programmable Logic Array**.
-
-In a PLA:
-
-- AND array is programmable.
-- OR array is programmable.
-
-Only the required product terms are generated, and product terms can be shared between outputs.
-
-#### Advantages
-
-- Most flexible basic PLD
-- Efficient product-term generation
-- Supports product-term sharing
-
-#### Limitations
-
-- More complex
-- Generally slower than PAL
-
-### 7.3 PAL
-
-PAL stands for **Programmable Array Logic**.
-
-In a PAL:
-
-- AND array is programmable.
-- OR array is fixed.
-
-#### Advantages
-
-- Simpler than PLA
-- Generally faster than PLA
-- Easier to implement
-
-#### Limitations
-
-- Less flexible than PLA
-- Limited product terms per output
-- Restricted product-term sharing
-
-### 7.4 PROM vs PLA vs PAL
-
-| Device | AND Array | OR Array | Main Characteristic |
+| Device | AND Array | OR Array | Main Feature |
 |---|---|---|---|
 | PROM | Fixed | Programmable | Generates all minterms |
-| PLA | Programmable | Programmable | Maximum flexibility |
+| PLA | Programmable | Programmable | Most flexible |
 | PAL | Programmable | Fixed | Simpler and faster |
 
 `Flexibility: PLA > PAL > PROM`
 
 ---
 
-## 8. Modern DRAM Concepts
+## 8. Memory Timing and Power
 
-### 8.1 SDRAM
-
-SDRAM stands for **Synchronous Dynamic Random-Access Memory**.
-
-Its commands and data transfers are synchronized with a clock, enabling:
-
-- Predictable timing
-- Pipelined operations
-- Burst transfers
-
-### 8.2 DDR SDRAM
-
-DDR stands for **Double Data Rate**.
-
-DDR transfers data on both:
-
-- Rising clock edge
-- Falling clock edge
-
-A `1 GHz` memory clock therefore provides approximately `2 billion transfers per second` per data pin.
-
-### 8.3 Banks, Rows and Columns
-
-DRAM is divided into multiple banks. Each bank contains:
-
-- Rows
-- Columns
-- Sense amplifiers
-- A row buffer
-
-A basic access involves:
-
-1. **ACTIVATE:** Opens a row.
-2. **READ/WRITE:** Selects columns from the open row.
-3. **PRECHARGE:** Closes the row.
-
-Multiple banks allow commands to overlap and improve throughput.
-
-### 8.4 Burst Operation
-
-A burst transfers several consecutive data units after one read or write command.
-
-Benefits include:
-
-- Reduced command overhead
-- Higher bandwidth
-- Efficient cache-line transfers
-
-### 8.5 Prefetch Architecture
-
-DDR memories internally access multiple data bits at once and transfer them through faster external pins.
-
-Examples:
-
-- DDR: `2n` prefetch
-- DDR2: `4n` prefetch
-- DDR3: `8n` prefetch
-- DDR4: `8n` prefetch
-
-Prefetch increases external data rate without requiring the internal cell array to operate at the same frequency.
-
-### 8.6 Latency and Bandwidth
-
-- **Latency:** Time needed to complete an individual memory access.
-- **Bandwidth:** Amount of data transferred per unit time.
-
-A memory can have high bandwidth but still have significant access latency.
-
-### 8.7 Memory Controller
-
-The memory controller performs:
-
-- Address mapping
-- Command generation
-- Read and write scheduling
-- Refresh management
-- Bank management
-- Timing-constraint enforcement
-- Data-transfer coordination
-
----
-
-## 9. Memory Timing and Power
-
-### 9.1 Important Timing Parameters
+### 8.1 Important Timing Parameters
 
 - **Read access time:** Time from applying the address to receiving valid data.
 - **Write cycle time:** Minimum time required to complete a write.
@@ -884,7 +748,7 @@ The memory controller performs:
 
 Violating timing requirements can cause incorrect or unreliable memory operation.
 
-### 9.2 Dynamic Power
+### 8.2 Dynamic Power
 
 Dynamic power is consumed when circuit nodes switch:
 
@@ -907,7 +771,7 @@ Major sources include:
 - Input/output circuits
 - DRAM refresh operations
 
-### 9.3 Leakage Power
+### 8.3 Leakage Power
 
 Leakage power is consumed even when the memory is inactive:
 
@@ -915,13 +779,13 @@ Leakage power is consumed even when the memory is inactive:
 
 Leakage is significant in large memories because millions of cells contribute leakage current.
 
-### 9.4 Active and Standby Power
+### 8.4 Active and Standby Power
 
 - **Active power:** Consumed during read, write and switching operations.
 - **Standby power:** Consumed while the memory is powered but inactive.
 - **Refresh power:** Consumed by DRAM during periodic refresh.
 
-### 9.5 Power-Reduction Techniques
+### 8.5 Power-Reduction Techniques
 
 - Reduce supply voltage.
 - Reduce unnecessary bit-line and word-line switching.
@@ -934,28 +798,17 @@ Leakage is significant in large memories because millions of cells contribute le
 
 ---
 
-## 10. Memory Redundancy
+## 9. Memory Redundancy
 
 Memory arrays contain a very large number of cells, so even a small manufacturing defect can produce faulty bits.
 
 Instead of discarding the entire chip, additional rows and columns are included to replace defective ones.
 
-### Row Redundancy
+During manufacturing testing:
 
-If one or more cells in a row are faulty:
-
-1. Testing identifies the faulty row address.
-2. The address is stored using fuses, e-fuses or repair registers.
-3. Incoming addresses are compared with the stored faulty address.
-4. A matching address is redirected to a spare row.
-
-### Column Redundancy
-
-If a column or bit line is faulty:
-
-1. Testing identifies the faulty column.
-2. The faulty column is disconnected.
-3. A spare column is selected in its place.
+1. Faulty rows or columns are identified.
+2. Their addresses are stored using fuses or e-fuses.
+3. Future accesses to those addresses are redirected to spare rows or columns.
 
 ### Benefits
 
@@ -968,7 +821,7 @@ Memory faults are commonly detected using memory test techniques such as MBIST a
 
 ---
 
-## 11. Important Comparisons
+## 10. Important Comparisons
 
 ### RAM vs ROM
 
