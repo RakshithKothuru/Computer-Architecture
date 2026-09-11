@@ -9,9 +9,9 @@
 5. [ROM and Non-Volatile Memories](#5-rom-and-non-volatile-memories)
 6. [Flash Memory](#6-flash-memory)
 7. [Programmable Logic Devices](#7-programmable-logic-devices)
-8. [Memory Timing and Power](#9-memory-timing-and-power)
-9. [Memory Redundancy](#10-memory-redundancy)
-10. [Important Comparisons](#11-important-comparisons)
+8. [Memory Timing and Power](#8-memory-timing-and-power)
+9. [Memory Redundancy](#9-memory-redundancy)
+10. [Important Comparisons](#10-important-comparisons)
 
 ---
 
@@ -715,7 +715,7 @@ For example:
 
 The AND array generates `A̅B` and `AC`, and the OR array combines them.
 
-####The difference between PROM, PLA and PAL depends on which logic arrays are programmable:
+#### The difference between PROM, PLA and PAL depends on which logic arrays are programmable:
 
 - **PROM:** Fixed AND array and programmable OR array.  
   The fixed decoder generates all minterms, and the OR array selects the required ones. It can implement any combinational function but may generate unnecessary minterms.
